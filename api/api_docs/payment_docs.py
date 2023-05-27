@@ -25,4 +25,69 @@ id | integer | optional
 title_highlighted | string | optional
 
 Use page_size: 3
+
+
+========================================================
+
+Endpoint: https://127.0.0.1:5000
+GET /api/merchant/transactions/
+ 
+This API is for getting recent transaction information from Merchant
+ 
+Query parameters table:
+custId | string | Request for the Recent Transaction information of Customer| required
+transId |string| Request for the Recent Transaction information using Transaction ID | optional
+merchantId | string | Request for the Recent Transaction information using Merchant Order ID | optional
+ 
+Response schema (JSON object):
+results | array[object] (Recent Transaction Information Result Object)
+Each object in the "results" key has the following schema:
+transId | string | required
+transDt | datetime | optional
+merchantId | string | optional
+paymentAmt | string | optional
+paymentCur | string | optional
+
+Use custId: 5
+
+========================================================
+
+Endpoint: https://127.0.0.1:5000
+POST /api/bank/request
+ 
+This API is to request transaction information from bank
+ 
+Query parameters table:
+query | string |I would like to check a transaction status| required
+ 
+Response schema (JSON object):
+message | string | required
+
+========================================================
+
+Endpoint: https://127.0.0.1:5000
+POST /api/bank/verification
+ 
+This API respond to Bank verification requirements
+ 
+Query parameters table:
+queryIc | string |Identification Card Number| required
+ 
+Response schema (JSON object):
+message | string | required
+
+Use queryIc: 909090135832
+
+========================================================
+
+Endpoint: https://127.0.0.1:5000
+POST /api/bank/transaction
+ 
+This API send to Bank the transaction ID
+ 
+Query parameters table:
+queryTransId | string |Transaction ID| required
+ 
+Response schema (JSON object):
+message | string | required
 """
