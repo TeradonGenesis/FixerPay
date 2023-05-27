@@ -18,7 +18,7 @@ PINECONE_API_KEY=<Pinecone API Key>
 
 ### Available endpoints
 
-#### Create a book record 
+#### User query / request
 
 **POST** /api/v1/query
 
@@ -35,3 +35,19 @@ Response
     "message": "The payment has been refunded",
 }
 ```
+
+#### Upload user stories
+
+**POST** /api/v1/stories/upload
+
+Request
+Upload pdf file using form data
+
+Response
+```json
+{
+    "index-name": "payment-stories",
+    "message": "Stories uploaded"
+}
+```
+
