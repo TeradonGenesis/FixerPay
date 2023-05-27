@@ -4,7 +4,7 @@ PAYMENT_DOCS = """API documentation:
 Endpoint: http://127.0.0.1:5002
 GET /api/merchant/transactions
  
-This API is for getting recent transaction information from Merchant
+This API run first and is for getting recent transaction information from Merchant before requesting transaction information from Bank.
  
 Query parameters table:
 custId |string| Send Customer ID to Merchant | required
@@ -27,7 +27,7 @@ use record: latest
 Endpoint: http://127.0.0.1:5002
 GET /api/bank/transaction/status
  
-This API is to request transaction information from bank
+This API run last and is to request transaction information from bank after verifying the customer IC with the Bank.
  
 Query parameters table:
 bankTxnId | string | Bank Transaction number | required
@@ -36,12 +36,15 @@ hash | string | The hash key given by the bank to allow the calls for the bank t
 Response schema (JSON object):
 status | string | required
 
+use bankTxnId:999999
+use hash:999999
+
 ========================================================
 
 Endpoint: http://127.0.0.1:5002
 POST /api/bank/transaction/verification
  
-This API respond to Bank verification requirements
+This API run 2nd and is sending the customer IC for verification first before requesting the transaction information.
  
 Request parameters table:
 ic | string |Identification Card Number| required

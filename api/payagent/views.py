@@ -3,6 +3,10 @@ from . import payagent_blueprint
 from .services import PayAgent
 import os
 from werkzeug.utils import secure_filename
+import whisper
+import base64
+import openai
+
 payagent = PayAgent()
 
 @payagent_blueprint.route('/',methods=["POST"])
@@ -65,6 +69,30 @@ def upload_stories():
             'message': 'Stories uploaded',
             'index-name': index_name
         }), 201
+        
+    except Exception as e:
+            error_message = str(e)
+            return jsonify({"error": error_message}), 400
+    
+
+@payagent_blueprint.route('/whisper',methods=["POST"])
+def whisper_post():
+    try:
+        file = request.json['file']
+        decode_bytes = base64.b64decode(file)
+        filename = "audio.wav"
+        destination_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'docs')
+        doc_path = os.path.join(destination_folder, filename)
+
+        with open(doc_path, "wb") as wav_file:
+             wav_file.write(decode_bytes)
+        audio_file= open(doc_path, "rb")
+        transcript = openai.Audio.transcribe("whisper-1", audio_file)
+
+
+        return jsonify({
+            'text': transcript.text
+        }), 200
         
     except Exception as e:
             error_message = str(e)
