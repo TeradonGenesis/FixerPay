@@ -36,6 +36,7 @@ def upload_stories():
     try:
         
         file = request.files['file']
+        index_name = request.form['index_name']
 
         #rename the title if theres spacing
         filename = secure_filename(file.filename)
@@ -58,8 +59,7 @@ def upload_stories():
         
         file.save(filepath)
 
-        index_name = filename.rsplit('.',1)[0]
-        # payagent.upload_stories(filename, index_name)
+        payagent.upload_stories(filename, index_name)
 
         return jsonify({
             'message': 'Stories uploaded',

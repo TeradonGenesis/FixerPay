@@ -84,12 +84,11 @@ class PayAgent:
         agent = PlanAndExecute(planner=planner, executor=executor, verbose=True)
         return agent
 
-    def upload_stories(self, file: str, index_name: str)-> None:
-        relevant_parts = []
-        for p in Path(".").absolute().parts:
-            if relevant_parts[-3:] == ["langchain", "docs", "modules"]:
-                break
-        doc_path = str(Path(*relevant_parts) / file)
+    def upload_stories(self, filename: str, index_name: str)-> None:
+        
+        destination_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'docs')
+        doc_path = os.path.join(destination_folder, filename)
+
         loader = PyPDFLoader(doc_path)
         texts = loader.load_and_split(text_splitter=CharacterTextSplitter(chunk_size=1000, chunk_overlap=0))
         
