@@ -12,7 +12,7 @@ PINECONE_API_KEY=<Pinecone API Key>
 ```
 ![image](https://user-images.githubusercontent.com/48543482/235380019-09ab0d93-2f80-43cd-a15f-dd00902f4575.png)
 
-3. In the root directory, run ```python3 app.py```
+3. In the root directory, run ```python app.py```
 
 4. The server should then be up
 
