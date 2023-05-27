@@ -17,11 +17,11 @@ def run_process():
              raise Exception('Your request cannot be proccessed')
 
         api_call_tool = payagent.create_api_call_tool()
-        sql_query_tool = payagent.create_sql_query_tool()
+        # sql_query_tool = payagent.create_sql_query_tool()
 
         agent = payagent.create_agent([api_call_tool])
         
-        result = agent.run(query)
+        result = agent.run(user_story)
         
         return jsonify({
             'message': result,

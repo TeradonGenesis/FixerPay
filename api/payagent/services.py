@@ -8,7 +8,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import Pinecone
 from langchain.chat_models import ChatOpenAI
-from langchain.agents.tools import Tool
+from langchain.agents import Tool, initialize_agent
 import os
 from typing import List
 from pathlib import Path
@@ -33,11 +33,14 @@ class PayAgent:
         
         docsearch = Pinecone.from_existing_index(index_name, embeddings)
 
-        template="""Based on the user request given {query}, select the user stories that best matches what 
+        template="""Based on the user request, select the user stories that best matches what 
         the user wants to perform. Else, if no user story matches, return 'No user story found'. 
-        After selecting the stories, break it down into steps. """
+        After selecting the stories, break it down into steps.
 
-        prompt = PromptTemplate(template=template, input_variables=["query"])
+        Steps:
+        """
+        prompt = PromptTemplate(input_variables=[], template=template)
+        prompt.format()
         chain_type_kwargs = {"prompt": prompt}
         flow_docs = RetrievalQA.from_chain_type(llm=self.llm, chain_type="stuff",  retriever=docsearch.as_retriever(), chain_type_kwargs=chain_type_kwargs)
         
@@ -55,17 +58,17 @@ class PayAgent:
         
         return tool
     
-    def create_sql_query_tool(self):
-        dburi = "sqlite:///payment.db"
-        db = SQLDatabase.from_uri(dburi)
-        sql_chain = SQLDatabaseChain(llm=self.llm, database=db, verbose=True)
-        tool = Tool(
-                name = "SQL Executer System",
-                func=sql_chain.run,
-                description="Useful to query payment information in the database and provide the answers back"
-            )
+    # def create_sql_query_tool(self):
+    #     dburi = "sqlite:///payment.db"
+    #     db = SQLDatabase.from_uri(dburi)
+    #     sql_chain = SQLDatabaseChain(llm=self.llm, database=db, verbose=True)
+    #     tool = Tool(
+    #             name = "SQL Executer System",
+    #             func=sql_chain.run,
+    #             description="Useful to query payment information in the database and provide the answers back"
+    #         )
         
-        return tool
+    #     return tool
     
     # def create_math_calculator_tool(self):
     #     math_chain = LLMMathChain.from_llm(llm=self.llm, verbose=True)
@@ -79,9 +82,7 @@ class PayAgent:
         
        
     def create_agent(self, tools: List[Tool]) ->PlanAndExecute:
-        planner = load_chat_planner(llm=self.llm)
-        executor = load_agent_executor(llm=self.llm, tools=tools, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, max_iterations=10, max_execution_time=10, early_stopping_method="generate", verbose=True)
-        agent = PlanAndExecute(planner=planner, executor=executor, verbose=True)
+        agent = initialize_agent(llm=self.llm, tools=tools, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, max_iterations=10, max_execution_time=10, early_stopping_method="generate", verbose=True)
         return agent
 
     def upload_stories(self, filename: str, index_name: str)-> None:
