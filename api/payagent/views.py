@@ -19,7 +19,7 @@ def run_process():
         api_call_tool = payagent.create_api_call_tool()
         sql_query_tool = payagent.create_sql_query_tool()
 
-        agent = payagent.create_agent([api_call_tool, sql_query_tool])
+        agent = payagent.create_agent([api_call_tool])
         
         result = agent.run(query)
         

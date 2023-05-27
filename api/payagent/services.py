@@ -34,7 +34,7 @@ class PayAgent:
         docsearch = Pinecone.from_existing_index(index_name, embeddings)
 
         template="""Based on the user request given {query}, select the user stories that best matches what 
-        the user wants to perform Else, if no user story matches, return 'No user story found'. 
+        the user wants to perform. Else, if no user story matches, return 'No user story found'. 
         After selecting the stories, break it down into steps. """
 
         prompt = PromptTemplate(template=template, input_variables=["query"])
