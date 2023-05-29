@@ -33,17 +33,20 @@ class PayAgent:
         
         docsearch = Pinecone.from_existing_index(index_name, embeddings)
 
-        # template="""Based on the user request, understand the context of the request first then select the user stories that best matches what 
-        # the user wants to perform. Else, if no user story matches, return 'No user story found'. 
-        # QUESTION: {question}
-        # =========
-        # Steps:{context}
-        # """
+        template="""Based on the user request, select the step title that best matches what 
+        action the request wants to perform. Else, if no step title matches, return 'No user story found'. List down
+        the associated steps to the step title
 
-        # prompt = PromptTemplate(input_variables=["context", "question"], template=template)
-        # # prompt.format(context=docsearch, question=query)
-        # chain_type_kwargs = {"prompt": prompt}
-        flow_docs = RetrievalQA.from_chain_type(llm=self.llm, chain_type="stuff",  retriever=docsearch.as_retriever())
+        {context}
+
+        Request: {question}
+        
+        """
+
+        prompt = PromptTemplate(input_variables=["context", "question"], template=template)
+        prompt.format(context="List down the associated steps to the step title and make sure they are in order of the steps presented", question=query)
+        chain_type_kwargs = {"prompt": prompt, "verbose": True}
+        flow_docs = RetrievalQA.from_chain_type(llm=self.llm, chain_type="stuff",  retriever=docsearch.as_retriever(), chain_type_kwargs =chain_type_kwargs)
         
         user_story = flow_docs.run(query)
 
@@ -84,7 +87,17 @@ class PayAgent:
        
     def create_agent(self, tools: List[Tool]) ->PlanAndExecute:
         agent = initialize_agent(llm=self.llm, tools=tools, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, max_iterations=10, max_execution_time=10, early_stopping_method="generate", verbose=True)
+        
         return agent
+    
+    def run_api_chain(self, user_story: str):
+        api_chain = APIChain.from_llm_and_api_docs(llm=self.llm, api_docs=payment_docs.PAYMENT_DOCS, verbose=True)
+        
+        steps = user_story.split(".")
+        for step in steps:
+            result = api_chain.run(step)
+
+        return result
 
     def upload_stories(self, filename: str, index_name: str)-> None:
         

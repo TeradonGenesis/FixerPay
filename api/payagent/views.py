@@ -21,14 +21,13 @@ def run_process():
              raise Exception('Your request cannot be proccessed')
 
         api_call_tool = payagent.create_api_call_tool()
-        # sql_query_tool = payagent.create_sql_query_tool()
+        # # # sql_query_tool = payagent.create_sql_query_tool()
 
         agent = payagent.create_agent([api_call_tool])
-        
+        # # result = payagent.run_api_chain(user_story)
         result = agent.run(user_story)
-        
         return jsonify({
-            'message': result,
+            'message': result
         }), 200
         
     except Exception as e:
@@ -87,7 +86,7 @@ def whisper_post():
         with open(doc_path, "wb") as wav_file:
              wav_file.write(decode_bytes)
         audio_file= open(doc_path, "rb")
-        transcript = openai.Audio.transcribe("whisper-1", audio_file)
+        transcript = openai.Audio.transcribe("whisper-1", audio_file, language="en")
 
 
         return jsonify({

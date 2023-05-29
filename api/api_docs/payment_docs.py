@@ -1,6 +1,21 @@
 # flake8: noqa
 PAYMENT_DOCS = """API documentation:
 
+
+Endpoint: http://127.0.0.1:5002
+GET /api/merchant/transaction/dispute
+ 
+This API is used to query a payment dispute status
+ 
+Request parameters:
+custId | string | Customer unique ID | required
+ 
+Response schema (JSON object):
+message | string | The status of the payment dispute | required
+
+use custId:5
+================================
+
 Endpoint: http://127.0.0.1:5002
 GET /api/merchant/transactions
  
@@ -22,36 +37,5 @@ paymentCur | string | optional
 
 use custId: 909090135832
 use record: latest
-========================================================
-
-Endpoint: http://127.0.0.1:5002
-GET /api/bank/transaction/status
- 
-This API run last and is to request transaction information from bank after verifying the customer IC with the Bank.
- 
-Query parameters table:
-bankTxnId | string | Bank Transaction number | required
-hash | string | The hash key given by the bank to allow the calls for the bank transaction api | required
- 
-Response schema (JSON object):
-status | string | required
-
-use bankTxnId:999999
-use hash:999999
-
-========================================================
-
-Endpoint: http://127.0.0.1:5002
-POST /api/bank/transaction/verification
- 
-This API run 2nd and is sending the customer IC for verification first before requesting the transaction information.
- 
-Request parameters table:
-ic | string |Identification Card Number| required
- 
-Response schema (JSON object):
-hash | string | Hash key returned by the bank to authenticate the next bank api calls | required
-
-Use ic: 909090135832
 
 """
